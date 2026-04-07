@@ -1,31 +1,26 @@
 import streamlit as st
-import os
-from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from tools import search_tool
 
-load_dotenv()
+# ✅ Load API Key safely
+api_key = st.secrets["GROQ_API_KEY"]
 
-@st.cache_resource
-def autonomous_agent_new():
-    api_key = st.secrets["GROQ_API_KEY"]
+# ✅ Create LLM (GLOBAL)
+llm = ChatGroq(
+    groq_api_key=api_key,
+    model_name="llama-3.1-8b-instant"
+)
 
-    llm = ChatGroq(
-        groq_api_key=api_key,
-        model_name="llama-3.1-8b-instant"
-    )
-
-    return llm
-
-# def ask_llm(prompt):
-  #  return llm.invoke(prompt).content
+# ✅ LLM function
+def ask_llm(prompt):
+    response = llm.invoke(prompt)
+    return response.content
 
 
+# ✅ MAIN AGENT FUNCTION
 def autonomous_agent_new(user_task, max_steps=5):
-    global memory
-
     memory = []
-    context = "\n".join(memory)
+    context = ""
 
     for step in range(max_steps):
 
@@ -52,11 +47,13 @@ CONTENT:
         memory.append(response)
         context += "\n" + response
 
+        # 🔍 SEARCH ACTION
         if "SEARCH" in response:
             query = response.split("CONTENT:")[-1].strip()
             results = search_tool(query)
-            context += "\n".join(results)
+            context += "\n" + "\n".join(results)
 
+        # ✅ FINAL ANSWER
         if "FINAL" in response:
             return {
                 "steps": memory,
