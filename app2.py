@@ -2,51 +2,30 @@ import streamlit as st
 from autonomous_agent_new import autonomous_agent_new
 from file_reader import read_pdf
 
-# 🔥 Page config
+# 🔥 Page Config
 st.set_page_config(
     page_title="JARVIS AI Dashboard",
     page_icon="🤖",
     layout="wide"
 )
 
-# 🎨 PROFESSIONAL CSS (Gradient + Clean UI)
+# 🎨 UI STYLE
 st.markdown("""
 <style>
 body {
     background: linear-gradient(to right, #1f4037, #99f2c8);
 }
-.main {
-    background-color: transparent;
-}
-
-/* Input box */
-.stTextArea textarea {
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 16px;
-}
-
-/* Buttons */
-.stButton>button {
-    border-radius: 12px;
-    background: linear-gradient(45deg, #4CAF50, #2E7D32);
-    color: white;
-    font-weight: bold;
-    height: 50px;
-}
-
-/* Cards */
 .card {
     background: white;
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
 }
-
-/* Header */
-h1, h2, h3 {
-    color: #1f4037;
+.stButton>button {
+    border-radius: 10px;
+    height: 50px;
+    font-weight: bold;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -54,56 +33,44 @@ h1, h2, h3 {
 # 🧭 Sidebar
 with st.sidebar:
     st.title("🤖 JARVIS AI")
-    st.markdown("### ⚙️ Settings")
     max_steps = st.slider("Max Steps", 1, 10, 5)
 
-    st.markdown("---")
-    st.markdown("### 📂 Upload PDF")
-    uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
+    uploaded_file = st.file_uploader("📂 Upload PDF", type=["pdf"])
 
-    st.markdown("---")
-    st.markdown("Made by Selvam Kumar 🚀")
-
-# 📄 PDF READER FUNCTION
-uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
+# 📄 Read PDF
 pdf_text = ""
-if uploaded_file is not None:
+if uploaded_file:
     pdf_text = read_pdf(uploaded_file)
     st.success("PDF uploaded successfully ✅")
 
-# 🏠 HEADER
+    # 🔍 Debug preview
+    st.write("Preview:", pdf_text[:300])
+
+# 🏠 Main UI
 st.title("🤖 JARVIS AI Dashboard")
-st.subheader("Autonomous AI Agent with Thinking + Search + Analysis")
 
-# 💬 BIG INPUT AREA
-user_input = st.text_area(
-    "💡 Enter your task:",
-    height=150,
-    placeholder="Type your complex task here..."
-)
+user_input = st.text_area("💡 Enter your task:", height=150)
 
-# 🚀 RUN BUTTON
 if st.button("🚀 Run Agent"):
 
     if user_input.strip() == "":
-        st.warning("Please enter a task!")
+        st.warning("Enter a task")
     else:
-        with st.spinner("JARVIS is thinking... 🤔"):
-            
-            # Combine PDF + User Input
+        with st.spinner("Thinking... 🤔"):
+
             final_input = user_input
             if pdf_text:
-                final_input += f"\n\nUse this PDF content:\n{pdf_text[:2000]}"
+                final_input += f"\n\nUse this PDF:\n{pdf_text[:2000]}"
 
             result = autonomous_agent_new(final_input, max_steps=max_steps)
 
-        st.success("Task Completed ✅")
+        st.success("Done ✅")
 
-        # 🧠 STEPS
-        st.markdown("## 🧠 Agent Thinking")
+        # 🧠 Steps
+        st.subheader("🧠 Thinking Steps")
         for step in result["steps"]:
             st.markdown(f'<div class="card">{step}</div>', unsafe_allow_html=True)
 
-        # 🎯 FINAL OUTPUT
-        st.markdown("## 🎯 Final Answer")
+        # 🎯 Final
+        st.subheader("🎯 Final Answer")
         st.markdown(f'<div class="card">{result["final"]}</div>', unsafe_allow_html=True)
