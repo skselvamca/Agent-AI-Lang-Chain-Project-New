@@ -1,7 +1,6 @@
 import streamlit as st
 from autonomous_agent_new import autonomous_agent_new
 from file_reader import read_pdf
-import PyPDF2
 
 # 🔥 Page config
 st.set_page_config(
@@ -66,12 +65,10 @@ with st.sidebar:
     st.markdown("Made by Selvam Kumar 🚀")
 
 # 📄 PDF READER FUNCTION
+uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
 pdf_text = ""
 if uploaded_file is not None:
-    pdf_reader = PyPDF2.PdfReader(uploaded_file)
-    for page in pdf_reader.pages:
-        pdf_text += page.extract_text()
-
+    pdf_text = read_pdf(uploaded_file)
     st.success("PDF uploaded successfully ✅")
 
 # 🏠 HEADER
