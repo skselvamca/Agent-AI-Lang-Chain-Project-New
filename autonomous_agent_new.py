@@ -8,7 +8,7 @@ load_dotenv()
 
 @st.cache_resource
 def autonomous_agent_new():
-    api_key = st.secrets["KEY"]
+    api_key = st.secrets["GROQ_API_KEY"]
 
     llm = ChatGroq(
         groq_api_key=api_key,
