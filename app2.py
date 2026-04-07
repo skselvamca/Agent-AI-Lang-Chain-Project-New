@@ -1,5 +1,5 @@
 import streamlit as st
-from autonomous_agent import autonomous_agent
+from autonomous_agent_new import autonomous_agent_new
 from file_reader import read_pdf
 
 st.set_page_config(page_title="JARVIS AI", layout="wide")
@@ -23,7 +23,7 @@ if st.button("🚀 Run JARVIS"):
         st.warning("Please enter a task")
     else:
         with st.spinner("JARVIS is thinking... 🤖"):
-            result = autonomous_agent(user_input)
+            result = autonomous_agent_new(user_input)
 
         st.subheader("🧠 Thinking Steps")
         for i, step in enumerate(result["steps"], 1):
