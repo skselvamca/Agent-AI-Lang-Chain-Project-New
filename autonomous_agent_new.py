@@ -17,8 +17,8 @@ def autonomous_agent_new():
 
     return llm
 
-def ask_llm(prompt):
-    return llm.invoke(prompt).content
+# def ask_llm(prompt):
+  #  return llm.invoke(prompt).content
 
 
 def autonomous_agent_new(user_task, max_steps=5):
