@@ -17,7 +17,7 @@ def ask_llm(prompt):
     return llm.invoke(prompt).content
 
 
-def autonomous_agent(user_task, max_steps=5):
+def autonomous_agent_new(user_task, max_steps=5):
     global memory
 
     context = "\n".join(memory)
