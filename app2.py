@@ -1,37 +1,53 @@
 import streamlit as st
 from autonomous_agent_new import autonomous_agent_new
 from file_reader import read_pdf
+import PyPDF2
 
-# 🔥 Page Config
+# 🔥 Page config
 st.set_page_config(
-    page_title="JARVIS AI",
+    page_title="JARVIS AI Dashboard",
     page_icon="🤖",
     layout="wide"
 )
 
-# 🎨 Custom CSS for Professional Look
+# 🎨 PROFESSIONAL CSS (Gradient + Clean UI)
 st.markdown("""
 <style>
+body {
+    background: linear-gradient(to right, #1f4037, #99f2c8);
+}
 .main {
-    background-color: #0E1117;
-    color: white;
+    background-color: transparent;
 }
-.stTextInput>div>div>input {
-    background-color: #1E1E1E;
-    color: white;
-    border-radius: 10px;
+
+/* Input box */
+.stTextArea textarea {
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 16px;
 }
+
+/* Buttons */
 .stButton>button {
-    border-radius: 10px;
-    background-color: #4CAF50;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #4CAF50, #2E7D32);
     color: white;
     font-weight: bold;
+    height: 50px;
 }
-.chat-box {
-    background-color: #1E1E1E;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
+
+/* Cards */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+    margin-bottom: 15px;
+}
+
+/* Header */
+h1, h2, h3 {
+    color: #1f4037;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -41,34 +57,56 @@ with st.sidebar:
     st.title("🤖 JARVIS AI")
     st.markdown("### ⚙️ Settings")
     max_steps = st.slider("Max Steps", 1, 10, 5)
+
     st.markdown("---")
-    st.markdown("### 📌 About")
-    st.write("Autonomous AI Agent using LangChain + Groq")
+    st.markdown("### 📂 Upload PDF")
+    uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
+
+    st.markdown("---")
     st.markdown("Made by Selvam Kumar 🚀")
 
-# 🏠 Main Header
-st.title("🤖 JARVIS AI Assistant")
-st.markdown("### Your Autonomous AI Agent")
+# 📄 PDF READER FUNCTION
+pdf_text = ""
+if uploaded_file is not None:
+    pdf_reader = PyPDF2.PdfReader(uploaded_file)
+    for page in pdf_reader.pages:
+        pdf_text += page.extract_text()
 
-# 💬 User Input
-user_input = st.text_input("💡 Enter your task:")
+    st.success("PDF uploaded successfully ✅")
 
-# 🚀 Run Button
-if st.button("Run Agent"):
+# 🏠 HEADER
+st.title("🤖 JARVIS AI Dashboard")
+st.subheader("Autonomous AI Agent with Thinking + Search + Analysis")
+
+# 💬 BIG INPUT AREA
+user_input = st.text_area(
+    "💡 Enter your task:",
+    height=150,
+    placeholder="Type your complex task here..."
+)
+
+# 🚀 RUN BUTTON
+if st.button("🚀 Run Agent"):
 
     if user_input.strip() == "":
         st.warning("Please enter a task!")
     else:
         with st.spinner("JARVIS is thinking... 🤔"):
-            result = autonomous_agent_new(user_input, max_steps=max_steps)
+            
+            # Combine PDF + User Input
+            final_input = user_input
+            if pdf_text:
+                final_input += f"\n\nUse this PDF content:\n{pdf_text[:2000]}"
+
+            result = autonomous_agent_new(final_input, max_steps=max_steps)
 
         st.success("Task Completed ✅")
 
-        # 🧠 Steps Output
-        st.subheader("🧠 Agent Thinking Steps")
+        # 🧠 STEPS
+        st.markdown("## 🧠 Agent Thinking")
         for step in result["steps"]:
-            st.markdown(f'<div class="chat-box">{step}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="card">{step}</div>', unsafe_allow_html=True)
 
-        # 🎯 Final Answer
-        st.subheader("🎯 Final Answer")
-        st.markdown(f'<div class="chat-box">{result["final"]}</div>', unsafe_allow_html=True)
+        # 🎯 FINAL OUTPUT
+        st.markdown("## 🎯 Final Answer")
+        st.markdown(f'<div class="card">{result["final"]}</div>', unsafe_allow_html=True)
