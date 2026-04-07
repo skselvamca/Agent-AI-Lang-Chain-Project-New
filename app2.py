@@ -1,5 +1,5 @@
 import streamlit as st
-from autonomous_agent_new import autonomous_agent
+from autonomous_agent_new import autonomous_agent_new
 from file_reader import read_pdf
 
 st.set_page_config(page_title="JARVIS AI", layout="wide")
