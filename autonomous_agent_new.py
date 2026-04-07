@@ -24,6 +24,7 @@ def ask_llm(prompt):
 def autonomous_agent_new(user_task, max_steps=5):
     global memory
 
+    memory = []
     context = "\n".join(memory)
 
     for step in range(max_steps):
