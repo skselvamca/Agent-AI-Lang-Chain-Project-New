@@ -1,3 +1,4 @@
+import streamlit as st
 import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
@@ -6,12 +7,15 @@ from tools import search_tool
 load_dotenv()
 
 @st.cache_resource
-def load_groq_client():
-    return Groq(api_key=st.secrets["GROQ_API_KEY"])
-    model_name="llama-3.1-8b-instant"      
+def autonomous_agent_new():
+    api_key = st.secrets["KEY"]
 
-client = load_groq_client()
+    llm = ChatGroq(
+        groq_api_key=api_key,
+        model_name="llama-3.1-8b-instant"
+    )
 
+    return llm
 
 def ask_llm(prompt):
     return llm.invoke(prompt).content
